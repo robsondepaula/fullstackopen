@@ -1,5 +1,33 @@
 import React from 'react';
 
+function Header(props) {
+  return (
+    <h1>{props.course}</h1>
+  );
+}
+
+function Content(props) {
+  return (
+    <div>
+      <p>
+        {props.parts[0]} {props.exercises[0]}
+      </p>
+      <p>
+        {props.parts[1]} {props.exercises[1]}
+      </p>
+      <p>
+        {props.parts[2]} {props.exercises[2]}
+      </p>
+    </div>
+  );
+}
+
+function Total(props) {
+return (
+  <p>Number of exercises {props.sum}</p>
+);
+}
+
 function App() {
   const course = 'Half Stack application development'
   const part1 = 'Fundamentals of React'
@@ -11,17 +39,9 @@ function App() {
 
   return (
     <div>
-      <h1>{course}</h1>
-      <p>
-        {part1} {exercises1}
-      </p>
-      <p>
-        {part2} {exercises2}
-      </p>
-      <p>
-        {part3} {exercises3}
-      </p>
-      <p>Number of exercises {exercises1 + exercises2 + exercises3}</p>
+      <Header course={course} />
+      <Content parts={[part1, part2, part3]} exercises={[exercises1, exercises2, exercises3]}/>
+      <Total sum={exercises1 + exercises2 + exercises3}/>
     </div>
   );
 }
