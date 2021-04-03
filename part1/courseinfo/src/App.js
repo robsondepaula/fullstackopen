@@ -6,28 +6,28 @@ function Header(props) {
   );
 }
 
-function Part(props){
+function Part(props) {
   return (
-  <p>
-        {props.part} {props.exercises}
-      </p>
+    <p>
+      {props.part} {props.exercises}
+    </p>
   );
 }
 
 function Content(props) {
   return (
     <div>
-      <Part part={props.parts[0]} exercises={props.exercises[0]}/>
-      <Part part={props.parts[1]} exercises={props.exercises[1]}/>
-      <Part part={props.parts[2]} exercises={props.exercises[2]}/>
+      <Part part={props.parts[0]} exercises={props.exercises[0]} />
+      <Part part={props.parts[1]} exercises={props.exercises[1]} />
+      <Part part={props.parts[2]} exercises={props.exercises[2]} />
     </div>
   );
 }
 
 function Total(props) {
-return (
-  <p>Number of exercises {props.sum}</p>
-);
+  return (
+    <p>Number of exercises {props.sum}</p>
+  );
 }
 
 function App() {
@@ -42,8 +42,8 @@ function App() {
   return (
     <div>
       <Header course={course} />
-      <Content parts={[part1, part2, part3]} exercises={[exercises1, exercises2, exercises3]}/>
-      <Total sum={exercises1 + exercises2 + exercises3}/>
+      <Content parts={[part1, part2, part3]} exercises={[exercises1, exercises2, exercises3]} />
+      <Total sum={exercises1 + exercises2 + exercises3} />
     </div>
   );
 }
