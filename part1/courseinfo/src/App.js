@@ -1,12 +1,12 @@
 import React from 'react';
 
-function Header(props) {
+const Header = (props) => {
   return (
     <h1>{props.course}</h1>
   );
 }
 
-function Part(props) {
+const Part = (props) => {
   return (
     <p>
       {props.part} {props.exercises}
@@ -14,7 +14,7 @@ function Part(props) {
   );
 }
 
-function Content(props) {
+const Content = (props) => {
   return (
     <div>
       <Part part={props.parts[0]} exercises={props.exercises[0]} />
@@ -24,13 +24,13 @@ function Content(props) {
   );
 }
 
-function Total(props) {
+const Total = (props) => {
   return (
     <p>Number of exercises {props.sum}</p>
   );
 }
 
-function App() {
+const App = () => {
   const course = 'Half Stack application development'
   const part1 = 'Fundamentals of React'
   const exercises1 = 10
