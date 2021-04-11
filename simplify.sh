@@ -49,6 +49,8 @@ if [ -d "$1" ]; then
             rm $i
         fi
     done
-fi
 
-echo "done"
+    echo "done"
+else
+    echo -e "path '$1' is invalid, please check it."
+fi
