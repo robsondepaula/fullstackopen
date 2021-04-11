@@ -8,7 +8,10 @@ const Header = ({ title }) => {
 
 const Statistic = ({ text, value }) => {
   return (
-    <p>{text}: {value}</p>
+    <tr>
+      <td>{text}:</td>
+      <td>{value}</td>
+    </tr>
   );
 }
 
@@ -18,12 +21,22 @@ const Statistics = ({ title, good, neutral, bad }) => {
     return (
       <div>
         <h1>{title}</h1>
-        <Statistic text="Good" value={good} />
-        <Statistic text="Neutral" value={neutral} />
-        <Statistic text="Bad" value={bad} />
-        <Statistic text="Total" value={all} />
-        <Statistic text="Average" value={(good - bad) / all} />
-        <Statistic text="Positive" value={((good / all) * 100) + "%"} />
+        <table>
+          <thead>
+            <tr>
+              <th />
+              <th />
+            </tr>
+          </thead>
+          <tbody>
+            <Statistic text="Good" value={good} />
+            <Statistic text="Neutral" value={neutral} />
+            <Statistic text="Bad" value={bad} />
+            <Statistic text="Total" value={all} />
+            <Statistic text="Average" value={(good - bad) / all} />
+            <Statistic text="Positive" value={((good / all) * 100) + "%"} />
+          </tbody>
+        </table>
       </div>
     );
   } else {
