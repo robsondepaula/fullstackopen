@@ -6,7 +6,7 @@ const Header = ({title}) => {
   );
 }
 
-const Footer = ({title, good, neutral, bad}) => {
+const Statistics = ({title, good, neutral, bad}) => {
   const all = good + neutral + bad;
   return (
     <div>
@@ -33,7 +33,7 @@ const App = () => {
       <button onClick={() => setGood(good + 1)}>Good</button>
       <button onClick={() => setNeutral(neutral + 1)}>Neutral</button>
       <button onClick={() => setBad(bad + 1)}>Bad</button>
-      <Footer title="Statistics:" good={good} neutral={neutral} bad={bad}/>
+      <Statistics title="Statistics:" good={good} neutral={neutral} bad={bad}/>
     </div>
   )
 }
