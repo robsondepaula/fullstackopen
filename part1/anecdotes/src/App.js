@@ -8,6 +8,28 @@ const randomize = (max) => {
   return Math.floor(Math.random() * max);
 }
 
+const findMostVotedIndex = (array) => {
+  let mostVoted = array[0];
+  let indexOfMostVoted = 0
+  for (let i = 0; i < array.length; i++) {
+    if (array[i] > mostVoted) {
+      mostVoted = array[i];
+      indexOfMostVoted = i;
+    }
+  }
+  return indexOfMostVoted;
+}
+
+const findMostVotedVotes = (array) => {
+  let mostVoted = array[0];
+  for (let i = 0; i < array.length; i++) {
+    if (array[i] > mostVoted) {
+      mostVoted = array[i];
+    }
+  }
+  return mostVoted;
+}
+
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often',
@@ -23,6 +45,7 @@ const App = () => {
 
   return (
     <div>
+      <h1>Anecdote of the day</h1>
       <p>
         {anecdotes[selected]}
       </p>
@@ -31,10 +54,17 @@ const App = () => {
       </p>
       <Button title="Vote" handleClick={() => {
         const copy = [...votes]
-        copy[selected] +=1
+        copy[selected] += 1
         setVotes(copy)
       }} />
       <Button title="Next anecdote" handleClick={() => setSelected(randomize(anecdotes.length))} />
+      <h1>Most voted anecdote</h1>
+      <p>
+        {anecdotes[findMostVotedIndex(votes)]}
+      </p>
+      <p>
+        Has {findMostVotedVotes(votes)} votes.
+      </p>
     </div>
   )
 }
