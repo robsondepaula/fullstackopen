@@ -7,16 +7,19 @@ const Header = ({ course }) => {
 }
 
 const Total = ({ course }) => {
-  const sum = course.parts[0].exercises + course.parts[1].exercises + course.parts[2].exercises
+  const sum = course.parts.reduce((a, b) => {
+    return {exercises: a.exercises + b.exercises};
+  });
+
   return (
-    <p>Number of exercises {sum}</p>
+    <p>Number of exercises {sum.exercises}</p>
   )
 }
 
-const Part = (props) => {
+const Part = ({ part }) => {
   return (
     <p>
-      {props.part.name} {props.part.exercises}
+      {part.name} {part.exercises}
     </p>
   )
 }
@@ -24,9 +27,8 @@ const Part = (props) => {
 const Content = ({ course }) => {
   return (
     <div>
-      <Part part={course.parts[0]} />
-      <Part part={course.parts[1]} />
-      <Part part={course.parts[2]} />
+      {course.parts.map(part =>
+        <Part key={part.id} part={part} />)}
     </div>
   )
 }
@@ -40,7 +42,6 @@ const Course = ({ course }) => {
     </div>
   )
 }
-
 const App = () => {
   const course = {
     id: 1,
