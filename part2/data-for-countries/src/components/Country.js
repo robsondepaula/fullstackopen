@@ -1,8 +1,15 @@
 import React from 'react'
 
-const Country = ({ name }) => {
+const Country = ({ name, handleShowDetails }) => {
     return (
-        <p>{name}</p>
+        <div>
+            <label>
+                {name}
+            </label>
+            <button onClick={handleShowDetails}>
+                show
+            </button>
+        </div>
     )
 }
 

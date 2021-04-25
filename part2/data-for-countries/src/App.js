@@ -26,7 +26,7 @@ const App = () => {
       return true
     }
 
-    return country.name.toLowerCase().includes(filterValue)
+    return country.name.toLowerCase().includes(filterValue.toLowerCase())
   })
 
   const tooMany = countriesToShow.length > 10
@@ -41,9 +41,11 @@ const App = () => {
           ) : (
             showDetails ?
               <Details key={countriesToShow[0].name} country={countriesToShow[0]} /> :
-              countriesToShow.map(country =>
-                <Country key={country.name} name={country.name} />
-              )
+              countriesToShow.map
+                (country =>
+                  <Country key={country.name} name={country.name}
+                    handleShowDetails={() => setNewFilter(country.name)} />
+                )
           )
         }
       </div>
