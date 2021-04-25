@@ -42,7 +42,7 @@ if [ -d "$1" ]; then
         echo "export default App" >> $filePath
     fi
 
-    arr=($1/src/App.css $1/src/App.test.js $1/src/logo.svg $1/src/setupTests.js $1/src/reportWebVitals.js)
+    arr=($1/src/App.css $1/src/App.test.js $1/src/logo.svg $1/src/setupTests.js $1/src/reportWebVitals.js $1/README.md)
     for i in "${arr[@]}"
     do
         if [ -f $i ]; then
