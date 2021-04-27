@@ -2,7 +2,14 @@ import React from 'react'
 
 const Persons = (props) => {
     return (
-        <p>{props.name} {props.number}</p>
+        <div>
+            <label>
+                {props.name} {props.number}
+            </label>
+            <button onClick={props.handleDelete}>
+                delete
+        </button>
+        </div>
     )
 }
 

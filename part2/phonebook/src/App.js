@@ -51,6 +51,20 @@ const App = () => {
     return person.name.toLowerCase().includes(filterValue)
   })
 
+  const handleDelete = (name, id) => {
+    if (window.confirm(`Delete ${name} ?`)) {
+      personService.remove(id)
+        .then(response => {
+          setPersons(persons.filter(person => { 
+            return person.id !== id 
+          }))
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    }
+  }
+
   useEffect(() => {
     personService
       .getAll()
@@ -71,7 +85,10 @@ const App = () => {
         newNumber={newNumber} handleNumberChange={handleNumberChange} />
       <h3>Numbers</h3>
       {numbersToShow.map(person =>
-        <Persons key={person.name} name={person.name} number={person.number} />
+        <Persons key={person.name}
+          name={person.name}
+          number={person.number}
+          handleDelete={() => handleDelete(person.name, person.id)} />
       )}
     </div>
   )
