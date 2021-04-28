@@ -11,10 +11,16 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [filterValue, setNewFilter] = useState('')
   const [notificationMessage, setNotificationMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
-  const showNotification = (message) => {
-    setNotificationMessage(message)
+  const showNotification = (message, isError) => {
+    if (isError === true) {
+      setErrorMessage(message)
+    } else {
+      setNotificationMessage(message)
+    }
     setTimeout(() => {
+      setErrorMessage(null)
       setNotificationMessage(null)
     }, 5000)
   }
@@ -31,7 +37,12 @@ const App = () => {
           .update(existingPerson.id, updatedPerson)
           .then(updatedPerson => {
             setPersons(persons.map(person => person.id !== existingPerson.id ? person : updatedPerson))
-            showNotification(`Updated '${updatedPerson.name}'`)
+            showNotification(`Updated '${newName}'`, false)
+          })
+          .catch(error => {
+            if (error.response && error.response.status === 404) {
+              showNotification(`Information of ${newName} has already been removed from server`, true)
+            }
           })
       }
     } else {
@@ -44,7 +55,7 @@ const App = () => {
         .create(nameObject)
         .then(returnedPerson => {
           setPersons(persons.concat(returnedPerson))
-          showNotification(`Added '${returnedPerson.name}'`)
+          showNotification(`Added '${returnedPerson.name}'`, false)
         })
     }
 
@@ -101,7 +112,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={notificationMessage} />
+      <Notification message={notificationMessage === null ? errorMessage : notificationMessage} isError={errorMessage !== null}/>
       <Filter filterValue={filterValue} handleFilterChange={handleFilterChange} />
       <Form addPerson={addPerson} newName={newName} handleNameChange={handleNameChange}
         newNumber={newNumber} handleNumberChange={handleNumberChange} />
