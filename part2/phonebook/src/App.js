@@ -42,6 +42,8 @@ const App = () => {
           .catch(error => {
             if (error.response && error.response.status === 404) {
               showNotification(`Information of ${newName} has already been removed from server`, true)
+            } else {
+              showNotification(error.response.data.error, true)
             }
           })
       }
@@ -56,6 +58,8 @@ const App = () => {
         .then(returnedPerson => {
           setPersons(persons.concat(returnedPerson))
           showNotification(`Added '${returnedPerson.name}'`, false)
+        }).catch(error => {
+          showNotification(error.response.data.error, true)
         })
     }
 
@@ -112,7 +116,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={notificationMessage === null ? errorMessage : notificationMessage} isError={errorMessage !== null}/>
+      <Notification message={notificationMessage === null ? errorMessage : notificationMessage} isError={errorMessage !== null} />
       <Filter filterValue={filterValue} handleFilterChange={handleFilterChange} />
       <Form addPerson={addPerson} newName={newName} handleNameChange={handleNameChange}
         newNumber={newNumber} handleNumberChange={handleNumberChange} />
