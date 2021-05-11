@@ -4,6 +4,5 @@ Content-Type: application/json
 {
     "title": "Another amazing title",
     "author": "Unknown Author",
-    "url": "https://loremflickr.com/640/360",
-    "likes": 0
+    "url": "https://loremflickr.com/640/360"
 }
