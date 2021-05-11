@@ -2,7 +2,7 @@ POST http://localhost:3001/api/blogs/
 Content-Type: application/json
 
 {
-    "title": "An amazing title",
+    "title": "Another amazing title",
     "author": "Unknown Author",
     "url": "https://loremflickr.com/640/360",
     "likes": 0
