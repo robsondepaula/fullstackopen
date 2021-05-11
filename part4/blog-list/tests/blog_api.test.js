@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
+const helper = require('./test_helper')
 
 const Blog = require('../models/blog')
 
@@ -21,10 +22,7 @@ const initialBlogList = [{
 
 beforeEach(async () => {
   await Blog.deleteMany({})
-  let blogObject = new Blog(initialBlogList[0])
-  await blogObject.save()
-  blogObject = new Blog(initialBlogList[1])
-  await blogObject.save()
+  await Blog.insertMany(helper.initialBlogList)
 })
 
 test('blog list is returned as json', async () => {
@@ -67,39 +65,59 @@ test('a valid blog can be added', async () => {
     'New Amazing title')
 })
 
+describe('input validation', () => {
+  test('missing likes assume 0 as default', async () => {
+    const newBlog = {
+      title: 'New Amazing title',
+      author: 'Unknown Author',
+      url: 'https://loremflickr.com/640/360'
+    }
 
-test('missing likes assume 0 as default', async () => {
-  const newBlog = {
-    title: 'New Amazing title',
-    author: 'Unknown Author',
-    url: 'https://loremflickr.com/640/360'
-  }
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
 
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(201)
-    .expect('Content-Type', /application\/json/)
+    const response = await api.get('/api/blogs')
 
-  const response = await api.get('/api/blogs')
+    const likes = response.body.map(r => r.likes)
 
-  const likes = response.body.map(r => r.likes)
+    expect(response.body).toHaveLength(initialBlogList.length + 1)
+    expect(likes).toContain(0)
+  })
 
-  expect(response.body).toHaveLength(initialBlogList.length + 1)
-  expect(likes).toContain(0)
+  test('missing title and url fails', async () => {
+    const newBlog = {
+      author: 'Unknown Author'
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+
+    const response = await api.get('/api/blogs')
+
+    expect(response.body).toHaveLength(initialBlogList.length)
+  })
 })
 
-test('missing title and url fails', async () => {
-  const newBlog = {
-    author: 'Unknown Author'
-  }
+describe('deletion of a blog', () => {
+  test('succeeds with status code 204 if id is valid', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToDelete = blogsAtStart[0]
 
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(400)
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .expect(204)
 
-  const response = await api.get('/api/blogs')
+    const blogsAtEnd = await helper.blogsInDb()
 
-  expect(response.body).toHaveLength(initialBlogList.length)
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogList.length - 1)
+
+    const titles = blogsAtEnd.map(r => r.title)
+
+    expect(titles).not.toContain(blogToDelete.title)
+  })
 })
