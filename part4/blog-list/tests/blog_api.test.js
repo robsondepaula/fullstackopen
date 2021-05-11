@@ -36,10 +36,33 @@ test('blog list is returned as json', async () => {
 
 test('blog list item contains id property', async () => {
   const response = await api.get('/api/blogs')
-  
+
   expect(response.body[0].id).toBeDefined()
 })
 
 afterAll(() => {
   mongoose.connection.close()
+})
+
+test('a valid blog can be added', async () => {
+  const newBlog = {
+    title: 'New Amazing title',
+    author: 'Unknown Author',
+    url: 'https://loremflickr.com/640/360',
+    likes: 0
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const response = await api.get('/api/blogs')
+
+  const titles = response.body.map(r => r.title)
+
+  expect(response.body).toHaveLength(initialBlogList.length + 1)
+  expect(titles).toContain(
+    'New Amazing title')
 })
