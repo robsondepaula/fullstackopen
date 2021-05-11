@@ -1,0 +1,9 @@
+PUT http://localhost:3001/api/blogs/60983382a068c20e64053e6c
+Content-Type: application/json
+
+{
+  "title": "An amazing title",
+  "author": "Unknown Author",
+  "url": "https://loremflickr.com/640/360",
+  "likes": 10
+}
