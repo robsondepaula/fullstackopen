@@ -88,3 +88,18 @@ test('missing likes assume 0 as default', async () => {
   expect(response.body).toHaveLength(initialBlogList.length + 1)
   expect(likes).toContain(0)
 })
+
+test('missing title and url fails', async () => {
+  const newBlog = {
+    author: 'Unknown Author'
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+
+  const response = await api.get('/api/blogs')
+
+  expect(response.body).toHaveLength(initialBlogList.length)
+})
