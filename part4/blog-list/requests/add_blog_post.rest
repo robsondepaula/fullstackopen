@@ -1,5 +1,19 @@
 POST http://localhost:3001/api/blogs/
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFrb2ppIiwiaWQiOiI2MGEyYzliMmEyOTI1YTFjNWExZTQwYzIiLCJpYXQiOjE2MjE0NTMyOTJ9.pdk1T28Vi7brP3A9IHnbPphe4VZhgYOyQkoZOukh_uQ
+
+{
+  "title": "An amazing title",
+  "author": "Unknown Author",
+  "url": "https://loremflickr.com/640/360",
+  "likes": 0
+}
+
+#######
+
+POST http://localhost:3001/api/blogs/
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cXI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFrb2ppIiwiaWQiOiI2MGEyYzliMmEyOTI1YTFjNWExZTQwYzIiLCJpYXQiOjE2MjE0NTMyOTJ9.pdk1T28Vi7brP3A9IHnbPphe4VZhgYOyQkoZOukh_uQ
 
 {
   "title": "An amazing title",
