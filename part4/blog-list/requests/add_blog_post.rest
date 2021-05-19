@@ -1,6 +1,6 @@
 POST http://localhost:3001/api/blogs/
 Content-Type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFrb2ppIiwiaWQiOiI2MGEyYzliMmEyOTI1YTFjNWExZTQwYzIiLCJpYXQiOjE2MjE0NTMyOTJ9.pdk1T28Vi7brP3A9IHnbPphe4VZhgYOyQkoZOukh_uQ
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFrb2ppIiwiaWQiOiI2MGEyYzliMmEyOTI1YTFjNWExZTQwYzIiLCJpYXQiOjE2MjE0NTY0NzB9.lwaN2S_ZuA4hcjefl8gwXLnGirj_6PdJseCjdh5Z3o0
 
 {
   "title": "An amazing title",
