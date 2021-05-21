@@ -3,26 +3,59 @@ const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
 const helper = require('./test_helper')
+const bcrypt = require('bcrypt')
 
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
-const initialBlogList = [{
-    title: 'Amazing title',
-    author: 'Unknown Author',
-    url: 'https://loremflickr.com/640/360',
-    likes: 1
-  },
-  {
-    title: 'Another amazing title',
-    author: 'Unknown Author',
-    url: 'https://loremflickr.com/640/360',
-    likes: 2
-  }
-]
+let auth = {
+  token: ``,
+  id: ``
+};
+async function userOps() {
+  const passwordHash = await bcrypt.hash('secret', 10)
+  const user = new User({
+    username: 'r00t',
+    passwordHash
+  })
+  await user.save()
+
+  const response = await api
+    .post('/api/login')
+    .send({
+      username: user.username,
+      password: "secret"
+    })
+    .expect(200)
+
+  auth.token = response.body.token;
+  auth.id = user._id
+}
+
+let initialBlogList;
+beforeAll(async () => {
+  await userOps()
+
+  initialBlogList = [{
+      title: 'Amazing title',
+      author: 'Unknown Author',
+      url: 'https://loremflickr.com/640/360',
+      likes: 1,
+      user: auth.id
+    },
+    {
+      title: 'Another amazing title',
+      author: 'Unknown Author',
+      url: 'https://loremflickr.com/640/360',
+      likes: 2,
+      user: auth.id
+    }
+  ]
+})
 
 beforeEach(async () => {
   await Blog.deleteMany({})
-  await Blog.insertMany(helper.initialBlogList)
+  await Blog.insertMany(initialBlogList)
 })
 
 test('blog list is returned as json', async () => {
@@ -52,6 +85,7 @@ test('a valid blog can be added', async () => {
 
   await api
     .post('/api/blogs')
+    .set('Authorization', 'Bearer ' + auth.token)
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
@@ -75,6 +109,7 @@ describe('input validation', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', 'Bearer ' + auth.token)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -94,6 +129,7 @@ describe('input validation', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', 'Bearer ' + auth.token)
       .send(newBlog)
       .expect(400)
 
@@ -110,11 +146,12 @@ describe('deletion of a blog', () => {
 
     await api
       .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Authorization', 'Bearer ' + auth.token)
       .expect(204)
 
     const blogsAtEnd = await helper.blogsInDb()
 
-    expect(blogsAtEnd).toHaveLength(helper.initialBlogList.length - 1)
+    expect(blogsAtEnd).toHaveLength(initialBlogList.length - 1)
 
     const titles = blogsAtEnd.map(r => r.title)
 
@@ -132,13 +169,14 @@ describe('updating a blog', () => {
     }
     await api
       .put(`/api/blogs/${blogToUpdate.id}`)
+      .set('Authorization', 'Bearer ' + auth.token)
       .send(updateBlog)
       .expect(200)
       .expect('Content-Type', /application\/json/)
 
     const blogsAtEnd = await helper.blogsInDb()
 
-    expect(blogsAtEnd).toHaveLength(helper.initialBlogList.length)
+    expect(blogsAtEnd).toHaveLength(initialBlogList.length)
 
     const likes = blogsAtEnd.map(r => r.likes)
     expect(likes).toContain(updateBlog.likes)

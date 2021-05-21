@@ -20,25 +20,38 @@ blogsRouter.post('/', async (request, response) => {
         }
 
         const user = request.user
-        blog.user = user._id
+        if (user) {
+            blog.user = user._id
 
-        const savedBlog = await blog.save()
-        user.blogs = user.blogs.concat(savedBlog._id)
-        await user.save()
+            const savedBlog = await blog.save()
+            user.blogs = user.blogs.concat(savedBlog._id)
+            await user.save()
 
-        response.status(201).json(savedBlog.toJSON())
+            response.status(201).json(savedBlog.toJSON())
+        } else {
+            return response.status(401).json({
+                error: 'unhautorized user'
+            })
+        }
     }
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
-    const userid = request.user._id
+    const user = request.user
+    if (user) {
+        const userid = user._id
 
-    const blog = await Blog.findById(request.params.id)
-    if ( blog.user.toString() === userid.toString() ) {
-        await Blog.deleteOne(blog)
+        const blog = await Blog.findById(request.params.id)
+        if (blog.user.toString() === userid.toString()) {
+            await Blog.deleteOne(blog)
+        }
+
+        response.status(204).end()
+    } else {
+        return response.status(401).json({
+            error: 'unhautorized user'
+        })
     }
-
-    response.status(204).end()
 })
 
 blogsRouter.put('/:id', async (request, response) => {
