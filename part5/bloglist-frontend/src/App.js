@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import AddBlogForm from './components/AddBlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
+
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -15,6 +17,7 @@ const App = () => {
   const [notificationMessage, setNotificationMessage] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
   const STORAGE_KEY = 'loggedBlogAppUser'
+  const [addBlogVisible, setAddBlogVisible] = useState(false)
 
   const showNotification = (message, isError) => {
     if (isError === true) {
@@ -111,60 +114,50 @@ const App = () => {
       .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
         showNotification(`Added '${returnedBlog.title}'`, false)
+        setAddBlogVisible(false)
       }).catch(error => {
         console.log(error)
         showNotification(error.message, true)
       })
   }
 
-  const addBlog = () => (
-    <form onSubmit={handleAddBlog}>
-      <div>
-        title: <input
-          type="text"
-          value={blogTitle}
-          name="Title"
-          onChange={({ target }) => setBlogTitle(target.value)}
-        />
-      </div>
-      <div>
-        author: <input
-          type="text"
-          value={blogAuthor}
-          name="Author"
-          onChange={({ target }) => setBlogAuthor(target.value)}
-        />
-      </div>
-      <div>
-        url: <input
-          type="text"
-          value={blogUrl}
-          name="Url"
-          onChange={({ target }) => setBlogUrl(target.value)}
-        />
-      </div>
-      <div>
-        <button type="submit">create</button>
-      </div>
-    </form>
-  )
 
-  const blogForm = () => (
-    <div>
-      <h2>blogs</h2>
-      <br />
-      <Notification message={notificationMessage === null ? errorMessage : notificationMessage} isError={errorMessage !== null} />
+
+  const blogForm = () => {
+    const hideWhenVisible = { display: addBlogVisible ? 'none' : '' }
+    const showWhenVisible = { display: addBlogVisible ? '' : 'none' }
+
+    return (
       <div>
-        <label>{user.name} logged in</label>
-        <button onClick={handleLogout}>logout</button>
+        <h2>blogs</h2>
+        <br />
+        <Notification message={notificationMessage === null ? errorMessage : notificationMessage} isError={errorMessage !== null} />
+        <div>
+          <label>{user.name} logged in</label>
+          <button onClick={handleLogout}>logout</button>
+        </div>
+        <div style={hideWhenVisible}>
+          <button onClick={() => setAddBlogVisible(true)}>new blog</button>
+        </div>
+        <div style={showWhenVisible}>
+          <AddBlogForm
+            blogAuthor={blogAuthor}
+            blogTitle={blogTitle}
+            blogUrl={blogUrl}
+            handleAuthorChange={({ target }) => setBlogAuthor(target.value)}
+            handleTitleChange={({ target }) => setBlogTitle(target.value)}
+            handleUrlChange={({ target }) => setBlogUrl(target.value)}
+            handleAddBlog={handleAddBlog}
+          />
+          <button onClick={() => setAddBlogVisible(false)}>cancel</button>
+        </div>
+        <br />
+        {blogs.map(blog =>
+          <Blog key={blog.id} blog={blog} />
+        )}
       </div>
-      {addBlog()}
-      <br />
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
-    </div>
-  )
+    )
+  }
 
   return (
     <div>
