@@ -9,7 +9,7 @@ const blogStyle = {
 }
 
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, handleLike }) => {
 
   const [visible, setVisible] = useState(false)
   const showWhenVisible = { display: visible ? '' : 'none' }
@@ -34,7 +34,7 @@ const Blog = ({ blog }) => {
           <label>
             likes {blog.likes}
           </label>
-          <button onClick={() => console.log('+1 like')}>like</button>
+          <button onClick={handleLike}>like</button>
         </div>
         <div>
           {blog.user ? blog.user.name : 'unknown user'}

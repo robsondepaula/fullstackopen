@@ -122,7 +122,11 @@ const App = () => {
       })
   }
 
+  const handleLike = async (blog) => {
 
+
+    console.log(blog)
+  }
 
   const blogForm = () => {
     return (
@@ -147,7 +151,7 @@ const App = () => {
         </Togglable>
         <br />
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />
+          <Blog key={blog.id} blog={blog} handleLike={() => handleLike(blog)} />
         )}
       </div>
     )
