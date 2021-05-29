@@ -117,15 +117,32 @@ const App = () => {
         setBlogs(blogs.concat(returnedBlog))
         showNotification(`Added '${returnedBlog.title}'`, false)
       }).catch(error => {
-        console.log(error)
         showNotification(error.message, true)
       })
   }
 
   const handleLike = async (blog) => {
 
+    const blogObject = {
+      id: blog.id,
+      title: blog.title,
+      author: blog.author,
+      url: blog.url,
+      user: blog.user ? blog.user.id : '',
+      likes: blog.likes + 1
+    }
 
-    console.log(blog)
+    blogService
+      .update(blogObject)
+      .then(returnedBlog => {
+        const newBlogs = [...blogs]
+        const foundIndex = newBlogs.findIndex(item => item.id === returnedBlog.id);
+        newBlogs[foundIndex] = returnedBlog;
+        setBlogs(newBlogs)
+        showNotification(`Updated '${returnedBlog.title}'`, false)
+      }).catch(error => {
+        showNotification(error.message, true)
+      })
   }
 
   const blogForm = () => {
