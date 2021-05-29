@@ -148,6 +148,25 @@ const App = () => {
     }
   }
 
+  const handleRemove = async (blog) => {
+
+    try {
+      const blogTitle = blog.title
+      const blogId = blog.id
+
+      if (window.confirm(`Remove blog '${blogTitle}' ?`)) {
+        await blogService.remove(blogId)
+
+        const newBlogs = blogs.filter((item) => item.id !== blogId);
+        setBlogs(newBlogs)
+
+        showNotification(`Removed '${blogTitle}'`, false)
+      }
+    } catch (error) {
+      showNotification(error.message, true)
+    }
+  }
+
   const blogForm = () => {
     blogs.sort((a, b) => (a.likes < b.likes) ? 1 : -1)
     return (
@@ -172,7 +191,12 @@ const App = () => {
         </Togglable>
         <br />
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} handleLike={() => handleLike(blog)} />
+          <Blog
+            key={blog.id}
+            blog={blog}
+            handleLike={() => handleLike(blog)}
+            userName={user.username}
+            handleRemove={() => handleRemove(blog)} />
         )}
       </div>
     )

@@ -9,13 +9,20 @@ const blogStyle = {
 }
 
 
-const Blog = ({ blog, handleLike }) => {
+const Blog = ({ blog, handleLike, userName, handleRemove }) => {
 
   const [visible, setVisible] = useState(false)
   const showWhenVisible = { display: visible ? '' : 'none' }
 
   const toggleVisibility = () => {
     setVisible(!visible)
+  }
+
+  const renderDelete = () => {
+    const blogUserName = blog.user ? blog.user.username : ''
+    if (userName === blogUserName) {
+      return <button onClick={handleRemove}>remove</button>
+    }
   }
 
   return (
@@ -38,6 +45,9 @@ const Blog = ({ blog, handleLike }) => {
         </div>
         <div>
           {blog.user ? blog.user.name : 'unknown user'}
+        </div>
+        <div>
+          {renderDelete()}
         </div>
       </div>
     </div>
