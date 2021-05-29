@@ -32,9 +32,11 @@ const App = () => {
   }
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs(blogs)
-    )
+    async function fetchData() {
+      const returnedBlogs = await blogService.getAll()
+      setBlogs(returnedBlogs)
+    }
+    fetchData();
   }, [])
 
   useEffect(() => {
@@ -111,14 +113,13 @@ const App = () => {
 
     addBlogFormRef.current.toggleVisibility()
 
-    blogService
-      .create(blogObject)
-      .then(returnedBlog => {
-        setBlogs(blogs.concat(returnedBlog))
-        showNotification(`Added '${returnedBlog.title}'`, false)
-      }).catch(error => {
-        showNotification(error.message, true)
-      })
+    try {
+      const returnedBlog = await blogService.create(blogObject)
+      setBlogs(blogs.concat(returnedBlog))
+      showNotification(`Added '${returnedBlog.title}'`, false)
+    } catch (error) {
+      showNotification(error.message, true)
+    }
   }
 
   const handleLike = async (blog) => {
@@ -132,17 +133,19 @@ const App = () => {
       likes: blog.likes + 1
     }
 
-    blogService
-      .update(blogObject)
-      .then(returnedBlog => {
-        const newBlogs = [...blogs]
-        const foundIndex = newBlogs.findIndex(item => item.id === returnedBlog.id);
-        newBlogs[foundIndex] = returnedBlog;
-        setBlogs(newBlogs)
-        showNotification(`Updated '${returnedBlog.title}'`, false)
-      }).catch(error => {
-        showNotification(error.message, true)
-      })
+    try {
+      const returnedBlog = await blogService.update(blogObject)
+
+      const newBlogs = [...blogs]
+      const foundIndex = newBlogs.findIndex(item => item.id === returnedBlog.id);
+      newBlogs[foundIndex] = returnedBlog;
+
+      setBlogs(newBlogs)
+
+      showNotification(`Updated '${returnedBlog.title}'`, false)
+    } catch (error) {
+      showNotification(error.message, true)
+    }
   }
 
   const blogForm = () => {
