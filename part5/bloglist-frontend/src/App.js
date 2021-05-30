@@ -36,7 +36,7 @@ const App = () => {
       const returnedBlogs = await blogService.getAll()
       setBlogs(returnedBlogs)
     }
-    fetchData();
+    fetchData()
   }, [])
 
   useEffect(() => {
@@ -81,7 +81,7 @@ const App = () => {
       <form onSubmit={handleLogin}>
         <div>
           username
-        <input
+          <input
             type="text"
             value={username}
             name="Username"
@@ -90,7 +90,7 @@ const App = () => {
         </div>
         <div>
           password
-        <input
+          <input
             type="password"
             value={password}
             name="Password"
@@ -137,8 +137,8 @@ const App = () => {
       const returnedBlog = await blogService.update(blogObject)
 
       const newBlogs = [...blogs]
-      const foundIndex = newBlogs.findIndex(item => item.id === returnedBlog.id);
-      newBlogs[foundIndex] = returnedBlog;
+      const foundIndex = newBlogs.findIndex(item => item.id === returnedBlog.id)
+      newBlogs[foundIndex] = returnedBlog
 
       setBlogs(newBlogs)
 
@@ -157,7 +157,7 @@ const App = () => {
       if (window.confirm(`Remove blog '${blogTitle}' ?`)) {
         await blogService.remove(blogId)
 
-        const newBlogs = blogs.filter((item) => item.id !== blogId);
+        const newBlogs = blogs.filter((item) => item.id !== blogId)
         setBlogs(newBlogs)
 
         showNotification(`Removed '${blogTitle}'`, false)
