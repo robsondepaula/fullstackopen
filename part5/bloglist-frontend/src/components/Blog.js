@@ -26,7 +26,7 @@ const Blog = ({ blog, handleLike, userName, handleRemove }) => {
   }
 
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className='blog'>
       <div>
         <label>
           {blog.title} {blog.author}
@@ -38,7 +38,7 @@ const Blog = ({ blog, handleLike, userName, handleRemove }) => {
           {blog.url}
         </div>
         <div>
-          <label>
+          <label className='likes'>
             likes {blog.likes}
           </label>
           <button onClick={handleLike}>like</button>
