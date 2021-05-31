@@ -11,35 +11,40 @@ const AddBlogForm = ({
     handleUrlChange
 }) => {
     return (
-        <form onSubmit={handleAddBlog}>
-            <div>
-                title: <input
-                    type="text"
-                    value={blogTitle}
-                    name="Title"
-                    onChange={handleTitleChange}
-                />
-            </div>
-            <div>
-                author: <input
-                    type="text"
-                    value={blogAuthor}
-                    name="Author"
-                    onChange={handleAuthorChange}
-                />
-            </div>
-            <div>
-                url: <input
-                    type="text"
-                    value={blogUrl}
-                    name="Url"
-                    onChange={handleUrlChange}
-                />
-            </div>
-            <div>
-                <button type="submit">create</button>
-            </div>
-        </form>
+        <div className="formDiv">
+            <form onSubmit={handleAddBlog}>
+                <div>
+                    title: <input
+                        id='title'
+                        type="text"
+                        value={blogTitle}
+                        name="Title"
+                        onChange={handleTitleChange}
+                    />
+                </div>
+                <div>
+                    author: <input
+                        id='author'
+                        type="text"
+                        value={blogAuthor}
+                        name="Author"
+                        onChange={handleAuthorChange}
+                    />
+                </div>
+                <div>
+                    url: <input
+                        id='url'
+                        type="text"
+                        value={blogUrl}
+                        name="Url"
+                        onChange={handleUrlChange}
+                    />
+                </div>
+                <div>
+                    <button type="submit">create</button>
+                </div>
+            </form>
+        </div>
     )
 }
 
