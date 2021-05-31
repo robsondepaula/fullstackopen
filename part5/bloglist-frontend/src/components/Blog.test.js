@@ -48,3 +48,22 @@ test('render check after click on "show" button', () => {
     const likes = component.container.querySelector('.likes')
     expect(likes).toBeVisible()
 })
+
+
+test('check if click on "like" is handled twice', () => {
+    const mockHandler = jest.fn()
+
+    const component = render(
+        <Blog blog={blog} handleLike={mockHandler} />
+    )
+
+    const buttonShow = component.getByText('show')
+    fireEvent.click(buttonShow)
+
+    const buttonLike = component.getByText('like')
+    fireEvent.click(buttonLike)
+    fireEvent.click(buttonLike)
+
+    expect(mockHandler.mock.calls).toHaveLength(2)
+
+})
