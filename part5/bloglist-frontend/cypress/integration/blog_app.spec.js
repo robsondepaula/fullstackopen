@@ -1,16 +1,16 @@
-const user = {
+const userAya = {
     name: 'あや こじ',
     username: 'akoji',
     password: 'たまご'
 }
 
+const userMaki = {
+    name: 'まき こじ',
+    username: 'mkoji',
+    password: 'さかな'
+}
+
 const blog = {
-    _id: '5a43fde2cbd20b12a2c34e91',
-    user: {
-        _id: '5a43e6b6c37f3d065eaaa581',
-        username: 'mluukkai',
-        name: 'Matti Luukkainen'
-    },
     likes: 0,
     author: 'Joel Spolsky',
     title: 'The Joel Test: 12 Steps to Better Code',
@@ -20,21 +20,22 @@ const blog = {
 describe('Blog app', function () {
     beforeEach(function () {
         cy.request('POST', 'http://localhost:3003/api/testing/reset')
-        cy.request('POST', 'http://localhost:3003/api/users/', user)
+        cy.request('POST', 'http://localhost:3003/api/users/', userAya)
+        cy.request('POST', 'http://localhost:3003/api/users/', userMaki)
         cy.visit('http://localhost:3000')
     })
 
     describe('Login', function () {
-        it('succeeds with correct credentials', function () {
+        xit('succeeds with correct credentials', function () {
             cy.contains('Log in').click()
-            cy.get('#username').type(user.username)
-            cy.get('#password').type(user.password)
+            cy.get('#username').type(userAya.username)
+            cy.get('#password').type(userAya.password)
             cy.get('#login-button').click()
 
-            cy.contains(`${user.name} logged in`)
+            cy.contains(`${userAya.name} logged in`)
         })
 
-        it('fails with wrong credentials', function () {
+        xit('fails with wrong credentials', function () {
             cy.contains('Log in').click()
             cy.get('#username').type('akoji')
             cy.get('#password').type('wrong')
@@ -48,10 +49,10 @@ describe('Blog app', function () {
 
     describe('When logged in', function () {
         beforeEach(function () {
-            cy.login({ username: user.username, password: user.password })
+            cy.login({ username: userAya.username, password: userAya.password })
         })
 
-        it('A blog can be created', function () {
+        xit('A blog can be created', function () {
             cy.contains('create new blog').click()
             cy.get('#title').type(blog.title)
             cy.get('#author').type(blog.author)
@@ -62,15 +63,15 @@ describe('Blog app', function () {
 
         describe('and a blog exists', function () {
             beforeEach(function () {
-              cy.createBlog({
-                title: blog.title,
-                author: blog.author,
-                url: blog.url,
-                likes: blog.likes
-              })
+                cy.createBlog({
+                    title: blog.title,
+                    author: blog.author,
+                    url: blog.url,
+                    likes: blog.likes
+                })
             })
 
-            it('it can be liked', function () {
+            xit('it can be liked', function () {
                 cy.contains(blog.title).parent().find('button').as('showButton')
                 cy.get('@showButton').click()
 
@@ -79,6 +80,38 @@ describe('Blog app', function () {
 
                 cy.contains(`likes ${blog.likes + 1}`)
             })
-          })
+
+            xit('it can be deleted', function () {
+                cy.contains(blog.title).parent().find('button').as('showButton')
+                cy.get('@showButton').click()
+
+                cy.contains(`${userAya.name}`).parent().find('button').as('deleteButton')
+                cy.get('@deleteButton').click()
+            })
+        })
+    })
+
+    describe('Multiple users', function () {
+        it('Aya creates, Maki cannot delete', function () {
+            cy.login({ username: userAya.username, password: userAya.password })
+            cy.createBlog({
+                title: blog.title,
+                author: blog.author,
+                url: blog.url,
+                likes: blog.likes
+            })
+
+
+            cy.contains(`${userAya.name} logged in`).parent().find('button').as('logoutButton')
+            cy.get('@logoutButton').click()
+
+            cy.login({ username: userMaki.username, password: userMaki.password })
+
+            cy.contains(blog.title).parent().find('button').as('showButton')
+            cy.get('@showButton').click()
+
+            cy.contains(`${userAya.name}`).contains('remove').should('not.exist')
+
+        })
     })
 })
