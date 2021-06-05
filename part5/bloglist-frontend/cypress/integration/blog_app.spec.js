@@ -4,14 +4,24 @@ const user = {
     password: 'たまご'
 }
 
+const blog = {
+    _id: '5a43fde2cbd20b12a2c34e91',
+    user: {
+        _id: '5a43e6b6c37f3d065eaaa581',
+        username: 'mluukkai',
+        name: 'Matti Luukkainen'
+    },
+    likes: 0,
+    author: 'Joel Spolsky',
+    title: 'The Joel Test: 12 Steps to Better Code',
+    url: 'https://www.joelonsoftware.com/2000/08/09/the-joel-test-12-steps-to-better-code/'
+}
+
 describe('Blog app', function () {
     beforeEach(function () {
         cy.request('POST', 'http://localhost:3003/api/testing/reset')
         cy.request('POST', 'http://localhost:3003/api/users/', user)
         cy.visit('http://localhost:3000')
-    })
-    it('Login form is shown', function () {
-        cy.contains('Log in').click()
     })
 
     describe('Login', function () {
@@ -33,6 +43,21 @@ describe('Blog app', function () {
             cy.get('.error')
                 .should('contain', 'Wrong credentials')
                 .and('have.css', 'color', 'rgb(255, 0, 0)')
+        })
+    })
+
+    describe('When logged in', function () {
+        beforeEach(function () {
+            cy.login({ username: user.username, password: user.password })
+        })
+
+        it('A blog can be created', function () {
+            cy.contains('create new blog').click()
+            cy.get('#title').type(blog.title)
+            cy.get('#author').type(blog.author)
+            cy.get('#url').type(blog.url)
+            cy.get('#create-blog-button').click()
+            cy.contains(blog.title)
         })
     })
 })
