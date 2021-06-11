@@ -129,9 +129,7 @@ const App = () => {
     const blogObject = {
       id: blog.id,
       title: blog.title,
-      author: blog.author,
       url: blog.url,
-      user: blog.user ? blog.user.id : '',
       likes: blog.likes + 1
     }
 
