@@ -113,6 +113,10 @@ const App = () => {
       url: blogUrl
     }
 
+    setBlogTitle('')
+    setBlogAuthor('')
+    setBlogUrl('')
+
     addBlogFormRef.current.toggleVisibility()
 
     try {
