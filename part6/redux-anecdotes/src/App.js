@@ -13,6 +13,7 @@ const App = () => {
     dispatch(createAnecdote(content))
   }
 
+  anecdotes.sort((a, b) => (a.votes < b.votes) ? 1 : -1)
   return (
     <div>
       <h2>Anecdotes</h2>
