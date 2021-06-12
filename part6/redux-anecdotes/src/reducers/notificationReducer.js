@@ -19,7 +19,7 @@ export const notify = message => {
 }
 
 
-export const clearNotification = () => {
+export const clear = () => {
     return {
         type: 'CLEAR',
     }
