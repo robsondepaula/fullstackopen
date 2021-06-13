@@ -1,7 +1,7 @@
 const notificationReducer = (state = '', action) => {
     switch (action.type) {
         case 'NOTIFY':
-            state = action.message
+            state = action.data
             break
         case 'CLEAR':
             state = ''
@@ -11,17 +11,17 @@ const notificationReducer = (state = '', action) => {
     return state
 }
 
-export const notify = message => {
-    return {
-        type: 'NOTIFY',
-        message,
-    }
-}
-
-
-export const clear = () => {
-    return {
-        type: 'CLEAR',
+export const setNotification = (message, timeout) => {
+    return async dispatch => {
+        dispatch({
+            type: 'NOTIFY',
+            data: message,
+        })
+        setTimeout(() => {
+            dispatch({
+                type: 'CLEAR',
+            })
+        }, timeout * 1000)
     }
 }
 
