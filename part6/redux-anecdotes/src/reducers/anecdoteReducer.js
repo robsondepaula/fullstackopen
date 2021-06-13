@@ -8,14 +8,14 @@ const reducer = (state = initialState, action) => {
     case 'NEW':
       return [...state, action.data]
     case 'VOTE':
-      const id = action.data.id
-      const anecdoteToVote = state.find(n => n.id === id)
-      const votedAnecdote = {
-        ...anecdoteToVote,
-        votes: anecdoteToVote.votes + 1
+      const updatedAnecdote = action.data
+      const toUpdate = state.find(n => n.id === updatedAnecdote.id)
+      const updated = {
+        ...toUpdate,
+        votes: updatedAnecdote.votes
       }
       return state.map(anecdote =>
-        anecdote.id !== id ? anecdote : votedAnecdote
+        anecdote.id !== updatedAnecdote.id ? anecdote : updated
       )
     case 'INIT':
       return action.data
@@ -25,11 +25,14 @@ const reducer = (state = initialState, action) => {
 }
 
 export const vote = (id) => {
-  return {
-    type: 'VOTE',
-    data: {
-      id
-    }
+  return async dispatch => {
+    let anecdoteToVote = await anecdoteServer.get(id)
+    anecdoteToVote.votes++
+    const votedAnecdote = await anecdoteServer.update(anecdoteToVote)
+    dispatch({
+      type: 'VOTE',
+      data: votedAnecdote,
+    })
   }
 }
 
