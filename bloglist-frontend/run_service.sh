@@ -1,7 +1,7 @@
 #!/bin/bash
 numParams=$#;
 
-cd ../../part4/blog-list/
+cd ../blog-list/
 
 if [ "$numParams" -eq "0" ]; then
     npm run dev
