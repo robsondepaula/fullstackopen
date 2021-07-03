@@ -1,26 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import AddBlogForm from './components/AddBlogForm'
-import loginService from './services/login'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
-import blogService from './services/blogs'
+
 import { createBlog, likeBlog, removeBlog, initializeBlogs } from './reducers/blogReducer'
+import { login, logout } from './reducers/userReducer'
 import { useSelector, useDispatch } from 'react-redux'
 
 const App = () => {
   const dispatch = useDispatch()
   const blogs = useSelector(state => state.blogs)
+  const user = useSelector(state => state.user)
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [blogTitle, setBlogTitle] = useState('')
   const [blogAuthor, setBlogAuthor] = useState('')
   const [blogUrl, setBlogUrl] = useState('')
-  const [user, setUser] = useState(null)
   const [notificationMessage, setNotificationMessage] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
-  const STORAGE_KEY = 'loggedBlogAppUser'
   const addBlogFormRef = useRef()
 
   const showNotification = (message, isError) => {
@@ -39,29 +38,15 @@ const App = () => {
     dispatch(initializeBlogs())
   }, [])
 
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem(STORAGE_KEY)
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      setUser(user)
-      blogService.setToken(user.token)
-    }
-  }, [])
-
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
-      const user = await loginService.login({
+      dispatch(login({
         username, password
-      })
-      setUser(user)
-      blogService.setToken(user.token)
+      }))
+
       setUsername('')
       setPassword('')
-
-      window.localStorage.setItem(
-        STORAGE_KEY, JSON.stringify(user)
-      )
     } catch (exception) {
       showNotification('Wrong credentials', true)
     }
@@ -70,8 +55,8 @@ const App = () => {
 
   const handleLogout = async (event) => {
     event.preventDefault()
-    window.localStorage.removeItem(STORAGE_KEY)
-    window.location.reload()
+
+    dispatch(logout())
   }
 
   const loginForm = () => (
