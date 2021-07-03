@@ -1,13 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import AddBlogForm from './components/AddBlogForm'
-import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
+import blogService from './services/blogs'
+import { createBlog, likeBlog, removeBlog, initializeBlogs } from './reducers/blogReducer'
+import { useSelector, useDispatch } from 'react-redux'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
+  const dispatch = useDispatch()
+  const blogs = useSelector(state => state.blogs)
+
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [blogTitle, setBlogTitle] = useState('')
@@ -32,11 +36,7 @@ const App = () => {
   }
 
   useEffect(() => {
-    async function fetchData() {
-      const returnedBlogs = await blogService.getAll()
-      setBlogs(returnedBlogs)
-    }
-    fetchData()
+    dispatch(initializeBlogs())
   }, [])
 
   useEffect(() => {
@@ -120,33 +120,18 @@ const App = () => {
     addBlogFormRef.current.toggleVisibility()
 
     try {
-      const returnedBlog = await blogService.create(blogObject)
-      setBlogs(blogs.concat(returnedBlog))
-      showNotification(`Added '${returnedBlog.title}'`, false)
+      dispatch(createBlog(blogObject))
+      showNotification(`Added '${blogObject.title}'`, false)
     } catch (error) {
       showNotification(error.message, true)
     }
   }
 
   const handleLike = async (blog) => {
-
-    const blogObject = {
-      id: blog.id,
-      title: blog.title,
-      url: blog.url,
-      likes: blog.likes + 1
-    }
-
     try {
-      const returnedBlog = await blogService.update(blogObject)
+      dispatch(likeBlog(blog))
 
-      const newBlogs = [...blogs]
-      const foundIndex = newBlogs.findIndex(item => item.id === returnedBlog.id)
-      newBlogs[foundIndex] = returnedBlog
-
-      setBlogs(newBlogs)
-
-      showNotification(`Updated '${returnedBlog.title}'`, false)
+      showNotification(`Updated '${blog.title}'`, false)
     } catch (error) {
       showNotification(error.message, true)
     }
@@ -159,10 +144,7 @@ const App = () => {
       const blogId = blog.id
 
       if (window.confirm(`Remove blog '${blogTitle}' ?`)) {
-        await blogService.remove(blogId)
-
-        const newBlogs = blogs.filter((item) => item.id !== blogId)
-        setBlogs(newBlogs)
+        dispatch(removeBlog(blogId))
 
         showNotification(`Removed '${blogTitle}'`, false)
       }
