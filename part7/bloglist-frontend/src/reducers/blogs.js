@@ -1,17 +1,19 @@
 import blogService from '../services/blogs'
 
-const byLikes = (b1, b2) => b2.votes - b1.votes
-
 const reducer = (state = [], action) => {
     switch (action.type) {
         case 'INIT':
-            return action.data.sort(byLikes)
+            return action.data
         case 'LIKE': {
             const liked = action.data
-            return state.map(a => a.id === liked.id ? liked : a).sort(byLikes)
+            return state.map(b => b.id === liked.id ? liked : b)
         }
-        case 'REMOVE': {
-            return state.filter((item) => item.id !== action.data).sort(byLikes)
+        case 'COMMENT': {
+            const commented = action.data
+            return state.map(b => b.id === commented.id ? commented : b)
+        }
+        case 'DELETE': {
+            return state.filter(b => b.id !== action.id)
         }
         case 'CREATE':
             return [...state, action.data]
@@ -26,6 +28,16 @@ export const createBlog = (content) => {
         dispatch({
             type: 'CREATE',
             data
+        })
+    }
+}
+
+export const removeBlog = (id) => {
+    return async dispatch => {
+        await blogService.remove(id)
+        dispatch({
+            type: 'DELETE',
+            id
         })
     }
 }
@@ -51,12 +63,12 @@ export const likeBlog = (blog) => {
     }
 }
 
-export const removeBlog = (blogId) => {
+export const commentBlog = (id, comment) => {
     return async dispatch => {
-        await blogService.remove(blogId)
+        const data = await blogService.comment(id, comment)
         dispatch({
-            type: 'REMOVE',
-            data: blogId
+            type: 'LIKE',
+            data
         })
     }
 }

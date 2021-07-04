@@ -3,67 +3,78 @@ import '@testing-library/jest-dom/extend-expect'
 import { render, fireEvent } from '@testing-library/react'
 import Blog from './Blog'
 
-const blog = {
-    _id: '5a43fde2cbd20b12a2c34e91',
-    user: {
-        _id: '5a43e6b6c37f3d065eaaa581',
-        username: 'mluukkai',
-        name: 'Matti Luukkainen'
-    },
-    likes: 0,
-    author: 'Joel Spolsky',
-    title: 'The Joel Test: 12 Steps to Better Code',
-    url: 'https://www.joelonsoftware.com/2000/08/09/the-joel-test-12-steps-to-better-code/'
+const other = {
+  own: true,
+  handleRemove: () => {},
+  handleLike: () => {}
 }
 
-test('render check', () => {
-    const component = render(
-        <Blog blog={blog} />
-    )
-
-    expect(component.container).toHaveTextContent(
-        'The Joel Test: 12 Steps to Better Code'
-    )
-    expect(component.container).toHaveTextContent(
-        'Joel Spolsky'
-    )
-    const url = component.getByText('https://www.joelonsoftware.com/2000/08/09/the-joel-test-12-steps-to-better-code/')
-    expect(url).not.toBeVisible()
-
-    const likes = component.container.querySelector('.likes')
-    expect(likes).not.toBeVisible()
-})
-
-test('render check after click on "show" button', () => {
-    const component = render(
-        <Blog blog={blog} />
-    )
-
-    const button = component.getByText('show')
-    fireEvent.click(button)
-
-    const url = component.getByText('https://www.joelonsoftware.com/2000/08/09/the-joel-test-12-steps-to-better-code/')
-    expect(url).toBeVisible()
-
-    const likes = component.container.querySelector('.likes')
-    expect(likes).toBeVisible()
-})
-
-
-test('check if click on "like" is handled twice', () => {
-    const mockHandler = jest.fn()
+describe('Blog', () => {
+  test('renders only author and title by default', () => {
+    const blog = {
+      author: 'Ron Jeffries',
+      title: 'You’re NOT gonna need it!',
+      url: 'https://ronjeffries.com/xprog/articles/practices/pracnotneed/',
+      likes: 3,
+    }
 
     const component = render(
-        <Blog blog={blog} handleLike={mockHandler} />
+      <Blog blog={blog} {...other} />
     )
 
-    const buttonShow = component.getByText('show')
-    fireEvent.click(buttonShow)
+    expect(component.container).toHaveTextContent(blog.author)
+    expect(component.container).toHaveTextContent(blog.title)
+    expect(component.container).not.toHaveTextContent(blog.url)
+  })
 
-    const buttonLike = component.getByText('like')
-    fireEvent.click(buttonLike)
-    fireEvent.click(buttonLike)
+  test('renders url and likes when expanded', () => {
+    const blog = {
+      author: 'Ron Jeffries',
+      title: 'You’re NOT gonna need it!',
+      url: 'https://ronjeffries.com/xprog/articles/practices/pracnotneed/',
+      likes: 3,
+      user: {
+        name: 'Arto Hellas'
+      }
+    }
 
-    expect(mockHandler.mock.calls).toHaveLength(2)
+    const component = render(
+      <Blog blog={blog} {...other} />
+    )
+
+    const viewButton = component.getByText('view')
+    fireEvent.click(viewButton)
+
+    expect(component.container).toHaveTextContent(blog.url)
+    expect(component.container).toHaveTextContent(`likes ${blog.likes}`)
+  })
+
+  test('when liked twice, the event handler gets called twice', () => {
+    const blog = {
+      author: 'Ron Jeffries',
+      title: 'You’re NOT gonna need it!',
+      url: 'https://ronjeffries.com/xprog/articles/practices/pracnotneed/',
+      likes: 3,
+      id: 1,
+      user: {
+        name: 'Arto Hellas'
+      }
+    }
+
+    other.handleLike = jest.fn()
+
+    const component = render(
+      <Blog blog={blog} {...other} />
+    )
+
+    const viewButton = component.getByText('view')
+    fireEvent.click(viewButton)
+
+    const likeButton = component.getByText('like')
+    fireEvent.click(likeButton)
+    fireEvent.click(likeButton)
+
+    expect(other.handleLike.mock.calls.length).toBe(2)
+  })
 
 })
