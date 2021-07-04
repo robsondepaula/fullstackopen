@@ -16,6 +16,8 @@ import {
   useParams
 } from 'react-router-dom'
 
+import { Table } from 'react-bootstrap'
+
 const App = () => {
   const dispatch = useDispatch()
   const blogs = useSelector(state => state.blogs)
@@ -199,7 +201,7 @@ const App = () => {
     return (
       <div>
         <h2>Users</h2>
-        <table>
+        <Table striped>
           <tbody>
             <tr>
               <th></th>
@@ -216,7 +218,7 @@ const App = () => {
               </tr>
             )}
           </tbody>
-        </table>
+        </Table>
       </div>
     )
   }
@@ -246,7 +248,7 @@ const App = () => {
   }
 
   return (
-    <div>
+    <div className="container">
       <Router>
         <div>
           <Link style={padding} to="/">blogs</Link>
