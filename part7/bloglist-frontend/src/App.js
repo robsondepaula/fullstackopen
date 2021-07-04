@@ -6,12 +6,20 @@ import Togglable from './components/Togglable'
 
 import { createBlog, likeBlog, removeBlog, initializeBlogs } from './reducers/blogReducer'
 import { login, logout } from './reducers/userReducer'
+import { initializeUsers } from './reducers/usersReducer'
+
 import { useSelector, useDispatch } from 'react-redux'
+
+import {
+  BrowserRouter as Router,
+  Switch, Route, Link
+} from 'react-router-dom'
 
 const App = () => {
   const dispatch = useDispatch()
   const blogs = useSelector(state => state.blogs)
   const user = useSelector(state => state.user)
+  const users = useSelector(state => state.users)
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -36,6 +44,10 @@ const App = () => {
 
   useEffect(() => {
     dispatch(initializeBlogs())
+  }, [])
+
+  useEffect(() => {
+    dispatch(initializeUsers())
   }, [])
 
   const handleLogin = async (event) => {
@@ -145,10 +157,6 @@ const App = () => {
         <h2>blogs</h2>
         <br />
         <Notification message={notificationMessage === null ? errorMessage : notificationMessage} isError={errorMessage !== null} />
-        <div>
-          <label>{user.name} logged in</label>
-          <button onClick={handleLogout}>logout</button>
-        </div>
         <Togglable buttonLabel='create new blog' ref={addBlogFormRef}>
           <AddBlogForm
             blogAuthor={blogAuthor}
@@ -173,12 +181,60 @@ const App = () => {
     )
   }
 
+  const Logged = () => {
+    return (
+      <>
+        {user.name} logged in
+        <button onClick={handleLogout}>logout</button>
+      </>
+    )
+  }
+
+  const Users = () => {
+    return (
+      <div>
+        <h2>Users</h2>
+        <table>
+          <tr>
+            <th></th>
+            <th>blogs created</th>
+          </tr>
+          {users.map(item =>
+            <tr key={item.id}>
+              <td>{item.name}</td>
+              <td>{item.blogs.length}</td>
+            </tr>
+          )}
+        </table>
+      </div>
+    )
+  }
+
+  const padding = {
+    padding: 5
+  }
+
   return (
     <div>
-      {user === null ?
-        loginForm() :
-        blogForm()
-      }
+      <Router>
+        <div>
+          <Link style={padding} to="/">blogs</Link>
+          <Link style={padding} to="/users">users</Link>
+          {user ? Logged() : loginForm()}
+        </div>
+
+        <Switch>
+          <Route path="/blogs/:id">
+            <Blog blogs={blogs} />
+          </Route>
+          <Route path="/users">
+            {user ? <Users /> : loginForm()}
+          </Route>
+          <Route path="/">
+            {blogForm()}
+          </Route>
+        </Switch>
+      </Router>
     </div>
   )
 }
