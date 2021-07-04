@@ -12,7 +12,8 @@ import { useSelector, useDispatch } from 'react-redux'
 
 import {
   BrowserRouter as Router,
-  Switch, Route, Link
+  Switch, Route, Link,
+  useParams
 } from 'react-router-dom'
 
 const App = () => {
@@ -59,6 +60,7 @@ const App = () => {
 
       setUsername('')
       setPassword('')
+
     } catch (exception) {
       showNotification('Wrong credentials', true)
     }
@@ -191,21 +193,50 @@ const App = () => {
   }
 
   const Users = () => {
+    if (!users) {
+      return null
+    }
     return (
       <div>
         <h2>Users</h2>
         <table>
-          <tr>
-            <th></th>
-            <th>blogs created</th>
-          </tr>
-          {users.map(item =>
-            <tr key={item.id}>
-              <td>{item.name}</td>
-              <td>{item.blogs.length}</td>
+          <tbody>
+            <tr>
+              <th></th>
+              <th>blogs created</th>
             </tr>
-          )}
+            {users.map(item =>
+              <tr key={item.id}>
+                <td>
+                  <Link to={`/users/${item.id}`}>
+                    {item.name}
+                  </Link>
+                </td>
+                <td>{item.blogs.length}</td>
+              </tr>
+            )}
+          </tbody>
         </table>
+      </div>
+    )
+  }
+
+  const UserDetails = ({ users }) => {
+    const id = useParams().id
+    const routedUser = users.find(u => u.id === id)
+    if (!routedUser) {
+      return null
+    }
+    return (
+      <div>
+        <h2>{routedUser.name}</h2>
+        <ul>
+          {routedUser.blogs.map(blog =>
+            <li key={blog.id}>
+              {blog.title}
+            </li>
+          )}
+        </ul>
       </div>
     )
   }
@@ -228,10 +259,13 @@ const App = () => {
             <Blog blogs={blogs} />
           </Route>
           <Route path="/users">
-            {user ? <Users /> : loginForm()}
+            <Users />
+          </Route>
+          <Route path="/users/:id">
+            <UserDetails users={users} />
           </Route>
           <Route path="/">
-            {blogForm()}
+            {user ? blogForm() : null}
           </Route>
         </Switch>
       </Router>
