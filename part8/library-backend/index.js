@@ -1,6 +1,7 @@
 const {
     ApolloServer,
-    gql
+    gql,
+    RenameRootFields
 } = require('apollo-server')
 
 let authors = [{
@@ -100,10 +101,16 @@ const typeDefs = gql `
       genres: [String!]!
   }
 
+  type AuthorBooks {
+      name: String!,
+      bookCount: Int!
+  }
+
   type Query {
       bookCount: Int!
       authorCount: Int!
       allBooks: [Book!]!
+      allAuthors: [AuthorBooks!]!
   }
 `
 
@@ -111,7 +118,23 @@ const resolvers = {
     Query: {
         bookCount: () => books.length,
         authorCount: () => authors.length,
-        allBooks: () => books
+        allBooks: () => books,
+        allAuthors: () => {
+            const authorsWithCount = []
+
+            for (let i = 0; i < authors.length; i++) {
+                const count = books.reduce((n, book) => {
+                    return n + (book.author == authors[i].name)
+                }, 0)
+
+                authorsWithCount.push({
+                    name: authors[i].name,
+                    bookCount: count
+                })
+            }
+
+            return authorsWithCount
+        }
     }
 }
 
