@@ -3,25 +3,28 @@ import { useMutation } from '@apollo/client'
 
 import { ALL_PERSONS, CREATE_PERSON } from '../queries'
 
-const PersonForm = () => {
-    const [name, setName] = useState('asd' + Math.random())
-    const [phone, setPhone] = useState('dd')
-    const [street, setStreet] = useState('d')
-    const [city, setCity] = useState('asfas')
+const PersonForm = ({ setError }) => {
+    const [name, setName] = useState('')
+    const [phone, setPhone] = useState('')
+    const [street, setStreet] = useState('')
+    const [city, setCity] = useState('')
+
 
     const [createPersom] = useMutation(CREATE_PERSON, {
-        refetchQueries: [{ query: ALL_PERSONS }]
+        refetchQueries: [{ query: ALL_PERSONS }],
+        onError: (error) => {
+            setError(error.graphQLErrors[0].message)
+        }
     })
 
     const submit = async (event) => {
         event.preventDefault()
 
         createPersom({
-            variables: { name, phone, street, city },
-
+            variables: { name, phone, street, city }
         })
 
-        setName('')
+        setName('Arto Hellas')
         setPhone('')
         setStreet('')
         setCity('')
