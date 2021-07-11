@@ -19,7 +19,6 @@ const Notify = ({ errorMessage }) => {
 
 const App = () => {
   const [errorMessage, setErrorMessage] = useState(null)
-
   const result = useQuery(ALL_PERSONS)
 
   if (result.loading) {
@@ -38,7 +37,7 @@ const App = () => {
       <Notify errorMessage={errorMessage} />
       <Persons persons={result.data.allPersons} />
       <PersonForm setError={notify} />
-      <PhoneForm setError={notify} />
+      <PhoneForm notify={notify} />
     </div>
   )
 }
