@@ -97,8 +97,24 @@ const resolvers = {
 
             return Book.find({ genres: { $in: [args.genre] } })
         },
-        allAuthors: () => {
-            return Author.find({})
+        allAuthors: async () => {
+            let authors = await Author.find({})
+            let books = await Book.find({})
+            const authorsWithCount = []
+
+            for (let i = 0; i < authors.length; i++) {
+                const count = books.reduce((n, book) => {
+                    return n + (book.author == authors[i].id)
+                }, 0)
+
+                authorsWithCount.push({
+                    name: authors[i].name,
+                    born: authors[i].born,
+                    bookCount: count
+                })
+            }
+
+            return authorsWithCount
         },
         me: (root, args, context) => {
             return context.currentUser
