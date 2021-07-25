@@ -5,8 +5,8 @@ import Books from './components/Books'
 import NewBook from './components/NewBook'
 import LoginForm from './components/LoginForm'
 import Recommend from './components/Recommend'
-import { useQuery, useApolloClient } from '@apollo/client'
-import { ALL_AUTHORS } from './queries'
+import { useQuery, useSubscription, useApolloClient } from '@apollo/client'
+import { ALL_AUTHORS, BOOK_ADDED } from './queries'
 
 const Notify = ({ errorMessage }) => {
   if (!errorMessage) {
@@ -26,6 +26,12 @@ const App = () => {
   const result = useQuery(ALL_AUTHORS)
   const [token, setToken] = useState(null)
   const client = useApolloClient()
+
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      console.log(subscriptionData)
+    }
+  })
 
   useEffect(() => {
     if (token === null) {

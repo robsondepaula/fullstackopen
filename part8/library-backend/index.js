@@ -102,7 +102,7 @@ const resolvers = {
                 return Book.find({}).populate('author')
             }
 
-            return Book.find({ genres: { $in: [args.genre] } })
+            return Book.find({ genres: { $in: [args.genre] } }).populate('author')
         },
         allAuthors: async () => {
             let authors = await Author.find({})
