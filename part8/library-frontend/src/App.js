@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
@@ -26,6 +26,15 @@ const App = () => {
   const result = useQuery(ALL_AUTHORS)
   const [token, setToken] = useState(null)
   const client = useApolloClient()
+
+  useEffect(() => {
+    if (token === null) {
+      const localToken = window.localStorage.getItem('library-user-token')
+      if (localToken) {
+        setToken(localToken)
+      }
+    }
+  }, [token])
 
   if (result.loading) {
     return <div>loading...</div>
