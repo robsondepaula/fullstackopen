@@ -7,6 +7,8 @@ const Author = require('./models/author')
 const User = require('./models/user')
 const jwt = require('jsonwebtoken')
 
+const { PubSub } = require('apollo-server')
+
 const MONGODB_URI = process.env.MONGODB_URI
 const JWT_SECRET = process.env.JWT_SECRET
 
@@ -84,7 +86,12 @@ const typeDefs = gql`
         password: String!
       ): Token
   }
+
+  type Subscription {
+    bookAdded: Book!
+  } 
 `
+const pubsub = new PubSub()
 
 const resolvers = {
     Query: {
@@ -158,6 +165,9 @@ const resolvers = {
 
             try {
                 await book.save()
+
+                pubsub.publish('BOOK_ADDED', { bookAdded: book })
+
             } catch (error) {
                 throw new UserInputError(error.message, {
                     invalidArgs: args,
@@ -206,7 +216,12 @@ const resolvers = {
 
             return { value: jwt.sign(userForToken, JWT_SECRET) }
         },
-    }
+    },
+    Subscription: {
+        bookAdded: {
+            subscribe: () => pubsub.asyncIterator(['BOOK_ADDED'])
+        },
+    },
 }
 
 const server = new ApolloServer({
@@ -224,8 +239,7 @@ const server = new ApolloServer({
     }
 })
 
-server.listen().then(({
-    url
-}) => {
+server.listen().then(({ url, subscriptionsUrl }) => {
     console.log(`Server ready at ${url}`)
+    console.log(`Subscriptions ready at ${subscriptionsUrl}`)
 })
