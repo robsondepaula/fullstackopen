@@ -8,26 +8,26 @@ app.get('/hello', (_req, res) => {
 });
 
 app.get('/bmi', (req, res) => {
-    let weight: number
-    let height: number
+    let weight: number;
+    let height: number;
 
     try {
-        weight = Number(req.query.weight)
-        height = Number(req.query.height)
+        weight = Number(req.query.weight);
+        height = Number(req.query.height);
 
         if (isNaN(weight) && isNaN(height)) {
-            throw new Error('Provided values were not numbers!')
+            throw new Error('Provided values were not numbers!');
         }
     } catch (e) {
         res.send({ error: "malformatted parameters" });
-        return
+        return;
     }
 
     const response = {
         weight: weight,
         height: height,
         bmi: calculateBmi(height, weight)
-    }
+    };
 
     res.send(response);
 });
